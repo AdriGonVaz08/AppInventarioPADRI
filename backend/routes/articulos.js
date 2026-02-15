@@ -12,7 +12,7 @@ router.get('/', async (req, res) => {
     }
 });
 
-// 2. CREAR UNO (Para la Vista Añadir)
+// 2 CREAR UNO (Para la Vista Añadir)
 router.post('/', async (req, res) => {
     const articulo = new Articulo({
         nombre: req.body.nombre,
@@ -28,7 +28,7 @@ router.post('/', async (req, res) => {
     }
 });
 
-// 3. EDITAR UNO (Para la Vista Editar)
+// 3 EDITAR UNO (Para la Vista Editar)
 router.put('/:id', async (req, res) => {
     try {
         // Busca por ID y actualiza con los datos nuevos
@@ -43,7 +43,7 @@ router.put('/:id', async (req, res) => {
     }
 });
 
-// 4. BORRAR UNO (Para el botón Borrar)
+// 4 BORRAR UNO (Para el botón Borrar)
 router.delete('/:id', async (req, res) => {
     try {
         await Articulo.findByIdAndDelete(req.params.id);

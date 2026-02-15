@@ -1,19 +1,19 @@
-const express = require('express');
+const express = require('express'); //Express es el framework que usaremos para crear nuestro servidor
 const mongoose = require('mongoose');
-const cors = require('cors');
+const cors = require('cors'); //cors se usara para permitir que nuestro frontend (que corre en otro puerto) pueda comunicarse con el backend sin problemas de seguridad
 const Articulo = require('./models/Articulo'); // Importamos el modelo
 
 const app = express();
 app.use(cors());
-app.use(express.json());
+app.use(express.json()); // Esto es para que el servidor pueda entender los datos que le enviamos en formato JSON desde el frontend
 
-// --- TU CONEXIÓN (PEGA AQUÍ TU URL LARGA QUE YA FUNCIONA) ---
+// ---Establecemos nuestra conexion con MongoDB ---
 const uri = "mongodb://admin:admin1234@ac-qnsadp1-shard-00-00.hdo8nki.mongodb.net:27017,ac-qnsadp1-shard-00-01.hdo8nki.mongodb.net:27017,ac-qnsadp1-shard-00-02.hdo8nki.mongodb.net:27017/InventarioApp?ssl=true&authSource=admin&retryWrites=true&w=majority";
 
 mongoose.connect(uri)
   .then(async () => {
     console.log('¡Conexión exitosa a MongoDB Atlas!');
-    // TRUCO PARA EL 5: Insertar 30 artículos si no existen
+    // Insertar 30 artículos si no existen
     await inicializarDatos();
   })
   .catch((error) => console.error('Error al conectar:', error));
@@ -23,7 +23,7 @@ mongoose.connect(uri)
 const articulosRouter = require('./routes/articulos');
 app.use('/api/articulos', articulosRouter);
 
-// --- FUNCIÓN PARA CREAR 30 ARTÍCULOS AUTOMÁTICAMENTE ---
+// --- Funcion  para crear 30 Articulos automaticamente en caso de que la base de datos este vacia---
 async function inicializarDatos() {
     const cuenta = await Articulo.countDocuments();
     if (cuenta === 0) {
@@ -42,7 +42,7 @@ async function inicializarDatos() {
         console.log(`Ya tienes ${cuenta} artículos en la base de datos.`);
     }
 }
-
+//Finalmente, iniciamos el servidor en el puerto 3000
 const PORT = 3000;
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en http://localhost:${PORT}`);
