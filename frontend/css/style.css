@@ -1,0 +1,116 @@
+/* Variables de color */
+:root {
+    --primario: #2563eb;
+    --secundario: #64748b;
+    --peligro: #ef4444;
+    --fondo: #f8fafc;
+    --texto: #1e293b;
+    --blanco: #ffffff;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--fondo);
+    color: var(--texto);
+    margin: 0;
+    padding: 20px;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+/* Buscador y Controles */
+.controles {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 30px;
+}
+
+input[type="text"], select, input[type="number"], input[type="url"] {
+    padding: 10px 15px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 1rem;
+}
+
+.btn-primario {
+    background-color: var(--primario);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+/* Grid de Artículos */
+.grid-articulos {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 25px;
+}
+
+.card {
+    background: var(--blanco);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+    transition: transform 0.2s;
+    padding-bottom: 15px;
+}
+
+.card:hover { transform: translateY(-5px); }
+
+.card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.card h3 {
+    margin: 15px;
+    font-size: 1.2rem;
+}
+
+.card p {
+    margin: 0 15px 15px;
+    color: var(--secundario);
+}
+
+.acciones {
+    display: flex;
+    justify-content: space-around;
+    padding: 0 10px;
+}
+
+/* Botones de acción */
+.btn-edit { background: #e2e8f0; border: none; padding: 5px 15px; border-radius: 5px; cursor: pointer; }
+.btn-delete { background: #fee2e2; color: var(--peligro); border: none; padding: 5px 15px; border-radius: 5px; cursor: pointer; }
+
+/* Formulario */
+.oculto { display: none; }
+
+.card-form {
+    background: var(--blanco);
+    padding: 30px;
+    border-radius: 15px;
+    max-width: 500px;
+    margin: 0 auto;
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+}
+
+.grupo-input { margin-bottom: 20px; display: flex; flex-direction: column; }
+.grupo-input label { margin-bottom: 8px; font-weight: 600; }
+
+.botones-form { display: flex; gap: 10px; margin-top: 20px; }
+.btn-guardar { flex: 2; background: var(--primario); color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; }
+.btn-cancelar { flex: 1; background: var(--secundario); color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; }
