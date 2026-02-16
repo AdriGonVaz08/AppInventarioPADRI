@@ -59,3 +59,11 @@ El servidor necesita instalar sus dependencias para funcionar.
     * **Borrar:** Eliminación con confirmación de seguridad.
 3.  **Persistencia:**
     * Todos los cambios se guardan en tiempo real en MongoDB Atlas.
+  
+## 📸 Capturas de Pantalla
+
+Aquí puedes ver cómo luce la aplicación:
+
+| Vista Principal | Formulario de Edición |
+|:---:|:---:|
+| ![Vista Principal](screenshots/vista-principal.png) | ![Formulario](screenshots/formulario.png) | 
