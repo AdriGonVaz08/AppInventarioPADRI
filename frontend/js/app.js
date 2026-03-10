@@ -1,4 +1,4 @@
-const URL_API = 'http://localhost:3000/api/articulos';
+const URL_API = 'http://localhost:5216/api/articulos'; 
 let articulosLocales = [];
 
 // Elementos del DOM
@@ -9,12 +9,12 @@ const vistaPrincipal = document.getElementById('vista-principal');
 const vistaFormulario = document.getElementById('vista-formulario');
 const formArticulo = document.getElementById('form-articulo');
 
-// --- 1. CARGAR DATOS DEL BACKEND ---
+// --- 1. CARGAR DATOS ---
 async function obtenerArticulos() {
     try {
         const res = await fetch(URL_API);
         articulosLocales = await res.json();
-        filtrarYOrdenar(); // Renderiza la lista inicial
+        filtrarYOrdenar(); 
     } catch (error) {
         console.error("Error al obtener datos:", error);
     }
@@ -26,13 +26,18 @@ function renderizar(lista) {
     lista.forEach(art => {
         const card = document.createElement('div');
         card.className = 'card';
+        
+        // LIMPIEZA DE URL: Cambiamos cualquier puerto (5000, etc) por el 5216
+        // y nos aseguramos de usar art.imagen (que es como viene en tu JSON)
+        const urlImagenCorrecta = art.imagen.replace(/localhost:\d+/, 'localhost:5216');
+        
         card.innerHTML = `
-            <img src="${art.imagen}" alt="${art.nombre}">
+            <img src="${urlImagenCorrecta}" alt="${art.nombre}" onerror="this.src='https://via.placeholder.com/150?text=Error+Imagen'">
             <h3>${art.nombre}</h3>
             <p>Stock: <strong>${art.stock}</strong></p>
             <div class="acciones">
-                <button onclick="prepararEdicion('${art._id}')" class="btn-edit">Editar</button>
-                <button onclick="eliminarArticulo('${art._id}')" class="btn-delete">Eliminar</button>
+                <button onclick="prepararEdicion(${art.id})" class="btn-edit">Editar</button>
+                <button onclick="eliminarArticulo(${art.id})" class="btn-delete">Eliminar</button>
             </div>
         `;
         contenedor.appendChild(card);
@@ -48,10 +53,10 @@ function filtrarYOrdenar() {
 
     const orden = selectorOrden.value;
     filtrados.sort((a, b) => {
-    return orden === 'asc' 
-        ? a.nombre.localeCompare(b.nombre, undefined, { numeric: true }) 
-        : b.nombre.localeCompare(a.nombre, undefined, { numeric: true });
-});
+        return orden === 'asc' 
+            ? a.nombre.localeCompare(b.nombre, undefined, { numeric: true }) 
+            : b.nombre.localeCompare(a.nombre, undefined, { numeric: true });
+    });
 
     renderizar(filtrados);
 }
@@ -72,62 +77,61 @@ function volverPrincipal() {
     vistaPrincipal.classList.remove('oculto');
 }
 
-// --- 5. CREAR O EDITAR (POST / PUT) ---
+// --- 5. GUARDAR (POST / PUT) ---
 formArticulo.onsubmit = async (e) => {
     e.preventDefault();
-    
     const id = document.getElementById('articulo-id').value;
-    const datos = {
-        nombre: document.getElementById('input-nombre').value,
-        stock: Number(document.getElementById('input-stock').value),
-        imagen: document.getElementById('input-imagen').value
-    };
+    const inputImagen = document.getElementById('input-imagen');
+
+    const formData = new FormData();
+    formData.append('nombre', document.getElementById('input-nombre').value);
+    formData.append('stock', document.getElementById('input-stock').value);
+    
+    if (inputImagen.files[0]) {
+        formData.append('imagen', inputImagen.files[0]);
+    }
 
     const metodo = id ? 'PUT' : 'POST';
     const url = id ? `${URL_API}/${id}` : URL_API;
 
     try {
-        await fetch(url, {
-            method: metodo,
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(datos)
-        });
-        volverPrincipal();
-        obtenerArticulos(); // Recargar lista
+        const res = await fetch(url, { method: metodo, body: formData });
+        if (res.ok) {
+            volverPrincipal();
+            obtenerArticulos(); 
+        }
     } catch (error) {
-        alert("Error al guardar el artículo");
+        alert("Error al conectar con el servidor");
     }
 };
 
 // --- 6. PREPARAR EDICIÓN ---
 function prepararEdicion(id) {
-    const art = articulosLocales.find(a => a._id === id);
-    document.getElementById('articulo-id').value = art._id;
-    document.getElementById('input-nombre').value = art.nombre;
-    document.getElementById('input-stock').value = art.stock;
-    document.getElementById('input-imagen').value = art.imagen;
-    
-    document.getElementById('titulo-formulario').innerText = "Editar Artículo";
-    mostrarFormulario(true);
+    const art = articulosLocales.find(a => a.id == id);
+    if (art) {
+        document.getElementById('articulo-id').value = art.id;
+        document.getElementById('input-nombre').value = art.nombre;
+        document.getElementById('input-stock').value = art.stock;
+        document.getElementById('titulo-formulario').innerText = "Editar Artículo";
+        mostrarFormulario(true);
+    }
 }
 
-// --- 7. ELIMINAR  ---
+// --- 7. ELIMINAR ---
 async function eliminarArticulo(id) {
-    if (confirm("¿Estás seguro de que deseas eliminar este artículo?")) {
+    if (confirm("¿Estás seguro?")) {
         try {
-            await fetch(`${URL_API}/${id}`, { method: 'DELETE' });
-            obtenerArticulos();
+            const res = await fetch(`${URL_API}/${id}`, { method: 'DELETE' });
+            if (res.ok) obtenerArticulos();
         } catch (error) {
             alert("Error al eliminar");
         }
     }
 }
 
-// --- EVENTOS ---
+// Eventos
 document.getElementById('btn-abrir-crear').onclick = () => mostrarFormulario();
 document.getElementById('btn-cancelar').onclick = volverPrincipal;
 buscador.oninput = filtrarYOrdenar;
 selectorOrden.onchange = filtrarYOrdenar;
-
-// Inicio
 document.addEventListener('DOMContentLoaded', obtenerArticulos);

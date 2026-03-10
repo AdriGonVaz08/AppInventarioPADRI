@@ -40,10 +40,12 @@
                     <input type="number" id="input-stock" placeholder="0" required min="0">
                 </div>
 
+                <!-- ESTA ES LA PARTE QUE HE CORREGIDO -->
                 <div class="grupo-input">
-                    <label for="input-imagen">URL de la Imagen</label>
-                    <input type="url" id="input-imagen" placeholder="https://link-de-la-imagen.com/img.jpg" required>
+                    <label for="input-imagen">Imagen del Producto</label>
+                    <input type="file" id="input-imagen" accept="image/*" required>
                 </div>
+                <!-- ------------------------------ -->
 
                 <div class="botones-form">
                     <button type="submit" class="btn-guardar">Guardar Cambios</button>
