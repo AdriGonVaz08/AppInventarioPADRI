@@ -49,8 +49,8 @@ namespace BackendInventario.Controllers
                     await imagen.CopyToAsync(fileStream);
                 }
 
-                // Guardar la ruta en la base de datos para que el frontend pueda mostrarla
-                articulo.Imagen = "http://localhost:5000/images/" + uniqueFileName;
+                // Guardar la ruta en la base de datos (¡Actualizado a tu puerto 5216!)
+                articulo.Imagen = "http://localhost:5216/images/" + uniqueFileName;
             }
             else
             {
@@ -63,7 +63,43 @@ namespace BackendInventario.Controllers
             return CreatedAtAction(nameof(GetArticulos), new { id = articulo.Id }, articulo);
         }
 
-        // 3. DELETE: api/Articulos/5 (Borrar)
+        // 3. PUT: api/Articulos/5 (Editar artículo, imagen opcional)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutArticulo(int id, [FromForm] string nombre, [FromForm] int stock, IFormFile? imagen)
+        {
+            var articulo = await _context.Articulos.FindAsync(id);
+            if (articulo == null)
+            {
+                return NotFound();
+            }
+
+            // Actualizamos los textos siempre
+            articulo.Nombre = nombre;
+            articulo.Stock = stock;
+
+            // Solo guardamos y cambiamos la imagen SI nos han enviado una nueva
+            if (imagen != null && imagen.Length > 0)
+            {
+                string uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images");
+                Directory.CreateDirectory(uploadsFolder);
+
+                string uniqueFileName = Guid.NewGuid().ToString() + "_" + imagen.FileName;
+                string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    await imagen.CopyToAsync(fileStream);
+                }
+
+                // Actualizamos la ruta solo si subió foto nueva
+                articulo.Imagen = "http://localhost:5216/images/" + uniqueFileName;
+            }
+
+            await _context.SaveChangesAsync();
+            return Ok(articulo);
+        }
+
+        // 4. DELETE: api/Articulos/5 (Borrar)
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteArticulo(int id)
         {
